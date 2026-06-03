@@ -1,0 +1,17 @@
+# Godot 4 generated files
+.godot/
+
+# Godot exports
+export.cfg
+export_presets.cfg
+*.translation
+
+# Mono/.NET (unused, but safe to ignore)
+.mono/
+data_*/
+mono_crash.*.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*~
