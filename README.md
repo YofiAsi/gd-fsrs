@@ -1,4 +1,6 @@
-# gd-fsrs
+<p align="center">
+  <img width="70%" alt="gd-fsrs-thumbnail" src="https://github.com/user-attachments/assets/c7d35bda-da67-4048-b440-eed61df8ea55" />
+</p>
 
 **FSRS-6 spaced-repetition scheduler for Godot 4** — a faithful GDScript port of
 [py-fsrs](https://github.com/open-spaced-repetition/py-fsrs) (v6.x).
