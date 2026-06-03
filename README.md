@@ -4,13 +4,7 @@
 [py-fsrs](https://github.com/open-spaced-repetition/py-fsrs) (v6.x).
 
 It mirrors py-fsrs's module structure, class/field/method names, constants, and
-mathematical behavior. The full py-fsrs `test_basic.py` suite is ported to GDScript
-and passes (39/39).
-
-> Scope: scheduling only. The ML **Optimizer** (parameter training) is out of scope,
-> as is any editor UI or persistence — storing cards/logs is up to you.
-
----
+mathematical behavior.
 
 ## Requirements
 
@@ -47,7 +41,7 @@ print("Retrievability: ", scheduler.get_card_retrievability(card))
 
 ### Datetimes
 
-There are no `datetime` objects. **All datetimes are UTC Unix timestamps (float seconds)**,
+**All datetimes are UTC Unix timestamps (float seconds)**,
 as returned by `Time.get_unix_time_from_system()`. To pass a specific moment, convert it:
 
 ```gdscript
@@ -114,73 +108,6 @@ FSRSScheduler.new(
     maximum_interval = 36500,           # days
     enable_fuzzing   = true)
 ```
-
-GDScript has no keyword arguments. To change just one option with the others defaulted,
-construct and then set the field — e.g. `var s := FSRSScheduler.new(); s.enable_fuzzing = false`.
-(Custom `parameters` must be passed to the constructor, since the decay factor is derived
-from them at construction.)
-
-```gdscript
-# Review a card. Returns a ReviewResult with .card and .review_log.
-scheduler.review_card(card, rating, review_datetime = null, review_duration = null) -> ReviewResult
-
-# Predicted recall probability (0.0–1.0) at a given time (defaults to now).
-scheduler.get_card_retrievability(card, current_datetime = null) -> float
-
-# Replay a card's history under this scheduler (e.g. after changing parameters).
-# Returns null (and pushes an error) if any log's card_id doesn't match the card.
-scheduler.reschedule_card(card, review_logs: Array) -> FSRSCard
-
-# Validate a parameter set without raising. Returns "" if valid, else an error message.
-FSRSScheduler.validate_parameters(params: Array) -> String   # static
-
-# Seed the fuzzing RNG for reproducible intervals (see "Notes" below).
-FSRSScheduler.seed(n: int)                                   # static
-
-scheduler.to_dict() / from_dict() / to_json() / from_json() / equals()  # serialization
-```
-
----
-
-## Running the tests
-
-The acceptance suite is a standalone headless runner that prints pass/fail per test
-and a final total:
-
-```sh
-godot --headless --path . --script res://addons/gd-fsrs/tests/test_basic.gd
-```
-
-On a fresh checkout the `class_name` globals must be registered first — run an import
-pass once if the script reports unknown identifiers:
-
-```sh
-godot --headless --path . --import
-```
-
-Float results are asserted within `1e-9` (or each test's own looser tolerance);
-state/step/rating are asserted as exact integers.
-
----
-
-## Notes & differences from py-fsrs
-
-These are deliberate adaptations where Python features don't map directly to GDScript.
-Mathematical behavior is unchanged.
-
-- **No exceptions.** Where py-fsrs raises `ValueError`, this port logs via `push_error`
-  and returns a detectable value: `validate_parameters()` returns an error string
-  (`""` = OK), and `reschedule_card()` returns `null` on a mismatched `card_id`.
-- **`review_card` returns a result object** (`ReviewResult` with `.card` and `.review_log`),
-  not a positional tuple.
-- **Serialization stores float Unix timestamps**, not ISO strings — Godot's
-  `Time` string conversions are second-precision only, so floats round-trip losslessly.
-  JSON is written with full float precision.
-- **Fuzzing uses Godot's native `RandomNumberGenerator`** (PCG32), not Python's
-  Mersenne Twister. Fuzzed intervals are therefore valid but will not match py-fsrs's
-  exact seeded values. Use `FSRSScheduler.seed(n)` for reproducible fuzzing, or set
-  `enable_fuzzing = false` for fully deterministic intervals.
-- **Out of scope:** the Optimizer, editor UI, and persistence.
 
 ## License
 
