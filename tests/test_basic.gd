@@ -1,4 +1,4 @@
-# godot --headless --path . --script res://addons/gd-fsrs/tests/test_basic.gd
+# godot --headless --path . --script res://tests/test_basic.gd
 extends SceneTree
 
 const DAY := 86400.0
